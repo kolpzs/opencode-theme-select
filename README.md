@@ -35,7 +35,13 @@ npm install -g opencode-theme-select
 theme-select pick
 ```
 
-Or without a global install:
+Or run it without installing:
+
+```bash
+npx opencode-theme-select pick
+```
+
+Or invoke the script directly:
 
 ```bash
 bash bin/theme-select.sh pick

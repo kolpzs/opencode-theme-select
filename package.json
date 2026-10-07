@@ -8,7 +8,7 @@
     ".": "./src/index.ts"
   },
   "bin": {
-    "theme-select": "./bin/theme-select.sh"
+    "theme-select": "./bin/theme-select.js"
   },
   "files": [
     "src",
