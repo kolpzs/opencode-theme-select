@@ -1,14 +1,18 @@
 {
   "name": "opencode-theme-select",
   "version": "0.1.0",
-  "description": "Plugin opencode: /theme-select para listar e aplicar temas (built-in ou custom) gravando o tui.json do projeto.",
+  "description": "opencode plugin: /theme-select to list and apply themes (built-in or custom) to the project's tui.json — no model round-trip needed",
   "type": "module",
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts"
   },
+  "bin": {
+    "theme-select": "./bin/theme-select.sh"
+  },
   "files": [
     "src",
+    "bin",
     "command",
     "README.md",
     "LICENSE"

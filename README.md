@@ -1,17 +1,22 @@
 # opencode-theme-select
 
-Plugin para [opencode](https://opencode.ai) que adiciona o comando `/theme-select` para listar e aplicar um tema (built-in ou custom) **gravando direto no `tui.json` do projeto**.
+A tiny [opencode](https://opencode.ai) plugin that adds a `/theme-select` command to list and apply themes (built-in or custom) by writing directly to the project's `tui.json` — **no model round-trip needed**.
 
-## O que faz
+## Features
 
-- `/theme-select` — lista os temas disponíveis (built-in + custom) e o tema atual, e deixa você escolher.
-- `/theme-select <nome>` — aplica o tema diretamente (ex.: `/theme-select matrix`).
+- `/theme-select` — list available themes (built-in + custom) and the current one.
+- `/theme-select <name>` — apply a theme directly (e.g. `/theme-select matrix`).
+- Discovers custom themes from `~/.config/opencode/themes/*.json` and `<project>/.opencode/themes/*.json`.
+- Writes/updates the project's `tui.json` while preserving other keys and comments.
+- Also ships as a standalone CLI (`theme-select`) for use outside opencode.
 
-O tema é gravado no `tui.json` da raiz do projeto (git root; se não houver git, usa o diretório atual), preservando as demais chaves e comentários do arquivo.
+## How it works
 
-## Instalação
+The plugin injects the `/theme-select` command at startup. The command shells out to a bundled bash script via the `!`...`` command feature, so the theme is written deterministically and instantly — the model is only used to relay the result back to you.
 
-Adicione ao seu `opencode.json` (global `~/.config/opencode/opencode.json` ou do projeto):
+## Install
+
+Add to your `opencode.json` (global `~/.config/opencode/opencode.json` or project):
 
 ```json
 {
@@ -19,36 +24,53 @@ Adicione ao seu `opencode.json` (global `~/.config/opencode/opencode.json` ou do
 }
 ```
 
-O opencode instala o pacote via Bun na inicialização.
+opencode installs the package via Bun on startup.
 
-## Uso
+### Optional: CLI
 
-1. Reinicie o opencode.
-2. Digite `/theme-select` (para escolher) ou `/theme-select tokyonight` (direto).
-3. Reinicie o opencode novamente para a cor do TUI atualizar (o tema é lido no startup).
+To use it directly in your terminal (no opencode needed):
 
-## Como funciona
+```bash
+npm install -g opencode-theme-select
+theme-select pick
+```
 
-O plugin registra a ferramenta `theme_select`, que:
+Or without a global install:
 
-- Descobre temas custom em `~/.config/opencode/themes/*.json` e `<projeto>/.opencode/themes/*.json`.
-- Junta com a lista de temas built-in.
-- Sem `theme`: lista tudo + tema atual.
-- Com `theme`: valida e grava/atualiza o `tui.json` do projeto.
+```bash
+bash bin/theme-select.sh pick
+```
 
-> O tema é por instância, não por aba/sessão.
+## Usage
 
-## Fallback do comando
+1. Restart opencode.
+2. Type `/theme-select` (list + current) or `/theme-select tokyonight` (apply).
+3. Restart opencode once more for the TUI colors to update (the theme is read at startup).
 
-Se o comando injetado não aparecer no seu setup, copie `command/theme-select.md` para `~/.config/opencode/commands/` (ou `.opencode/commands/`).
+> The theme is per opencode instance, not per tab/session.
 
-## Publicar no npm
+## CLI reference
+
+```
+theme-select            # list themes + current
+theme-select list       # same
+theme-select <name>     # apply a theme
+theme-select set <name> # same
+theme-select current    # print current theme
+theme-select pick       # interactive menu
+```
+
+## Fallback command
+
+If the injected command doesn't appear in your setup, copy `command/theme-select.md` to `~/.config/opencode/commands/` (or `.opencode/commands/`) and make sure the `theme-select` CLI is on your `PATH`.
+
+## Publishing to npm
 
 ```bash
 npm login
 npm publish
 ```
 
-## Licença
+## License
 
 MIT
