@@ -1,18 +1,18 @@
 # opencode-theme-select
 
-A tiny [opencode](https://opencode.ai) plugin that adds a `/theme-select` command to list and apply themes (built-in or custom) by writing directly to the project's `tui.json` — **no model round-trip needed**.
+A tiny [opencode](https://opencode.ai) plugin that adds a `/theme-select` command with an interactive picker: choose a theme from a menu and it is written straight to the project's `tui.json` — **no model round-trip needed**.
 
 ## Features
 
-- `/theme-select` — list available themes (built-in + custom) and the current one.
-- `/theme-select <name>` — apply a theme directly (e.g. `/theme-select matrix`).
+- `/theme-select` — opens an interactive menu listing available themes (built-in + custom) with the current one marked.
+- Picking a theme writes it to the project's `tui.json` and applies it immediately.
 - Discovers custom themes from `~/.config/opencode/themes/*.json` and `<project>/.opencode/themes/*.json`.
-- Writes/updates the project's `tui.json` while preserving other keys and comments.
+- Writes/updates `tui.json` while preserving other keys and comments.
 - Also ships as a standalone CLI (`theme-select`) for use outside opencode.
 
 ## How it works
 
-The plugin injects the `/theme-select` command at startup. The command shells out to a bundled bash script via the `!`...`` command feature, so the theme is written deterministically and instantly — the model is only used to relay the result back to you.
+The plugin registers a TUI command (`api.command.register`) that opens a `DialogSelect` menu. On selection it writes the theme to the project's `tui.json` (git root, falling back to the current directory) and calls `api.theme.set` to apply it instantly — all deterministic, with no model involvement.
 
 ## Install
 
@@ -50,8 +50,8 @@ bash bin/theme-select.sh pick
 ## Usage
 
 1. Restart opencode.
-2. Type `/theme-select` (list + current) or `/theme-select tokyonight` (apply).
-3. Restart opencode once more for the TUI colors to update (the theme is read at startup).
+2. Type `/theme-select`.
+3. Pick a theme from the menu — it is written to `tui.json` and applied immediately.
 
 > The theme is per opencode instance, not per tab/session.
 
