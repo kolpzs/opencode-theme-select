@@ -1,4 +1,4 @@
-import type { TuiPlugin } from "@opencode-ai/plugin/tui"
+import type { Plugin } from "@opencode/plugin/tui"
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises"
 import path from "node:path"
 import os from "node:os"
@@ -85,57 +85,47 @@ async function writeTheme(targetDir: string, theme: string): Promise<string> {
   return file
 }
 
-export const ThemeSelectTuiPlugin: TuiPlugin = async (api) => {
-  if (!api.command) return
+export default {
+  id: "opencode-theme-select",
+  setup(context: Plugin.Context) {
+    context.keymap.layer(() => ({
+      commands: [
+        {
+          id: "theme-select",
+          title: "Select theme",
+          description: "Apply a theme to this project's tui.json",
+          slash: { name: "theme-select" },
+          run: async () => {
+            const dir = (context.location ?? context.data.location.default()).directory
+            const themes = await listThemes(dir)
+            const current = await readCurrent(path.join(dir, "tui.json"))
 
-  const dispose = api.command.register(() => [
-    {
-      value: "theme-select",
-      title: "Select theme",
-      description: "Apply a theme to this project's tui.json",
-      category: "Theme",
-      slash: { name: "theme-select" },
-      onSelect: async () => {
-        const targetDir = api.state.path.worktree || api.state.path.directory
-        const themes = await listThemes(targetDir)
-        const current = await readCurrent(path.join(targetDir, "tui.json"))
+            const value = await context.ui.dialog.select<string>({
+              title: "Select theme",
+              options: themes.map((name) => ({
+                title: name,
+                value: name,
+                description: name === current ? "current" : undefined,
+              })),
+              current,
+            })
+            if (!value) return
 
-        api.ui.dialog.replace(() =>
-          api.ui.DialogSelect<string>({
-            title: "Select theme",
-            options: themes.map((name) => ({
-              title: name,
-              value: name,
-              description: name === current ? "current" : undefined,
-            })),
-            current,
-            onSelect: async (option) => {
-              const name = option.value
-              try {
-                const file = await writeTheme(targetDir, name)
-                try {
-                  api.theme.set(name)
-                } catch {
-                  // instant apply is best-effort; the tui.json write is what persists
-                }
-                api.ui.toast({
-                  variant: "success",
-                  message: `Theme set to "${name}" (${file})`,
-                })
-              } catch (err) {
-                api.ui.toast({
-                  variant: "error",
-                  message: `Failed to set theme: ${err}`,
-                })
-              }
-            },
-          }),
-        )
-      },
-    },
-  ])
-
-  api.lifecycle.onDispose(dispose)
+            try {
+              const file = await writeTheme(dir, value)
+              context.ui.toast.show({
+                variant: "success",
+                message: `Theme set to "${value}" (${file})`,
+              })
+            } catch (err) {
+              context.ui.toast.show({
+                variant: "error",
+                message: `Failed to set theme: ${String(err)}`,
+              })
+            }
+          },
+        },
+      ],
+    }))
+  },
 }
-
-export default { tui: ThemeSelectTuiPlugin }

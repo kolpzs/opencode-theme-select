@@ -1,7 +1,7 @@
 {
   "name": "opencode-theme-select",
   "version": "0.2.0",
-  "description": "opencode plugin: /theme-select to pick and apply a theme (built-in or custom) to the project's tui.json",
+  "description": "opencode v2 plugin: /theme-select to pick and apply a theme (built-in or custom) to the project's tui.json",
   "type": "module",
   "main": "src/index.ts",
   "exports": {
@@ -14,7 +14,6 @@
   "files": [
     "src",
     "bin",
-    "command",
     "README.md",
     "LICENSE"
   ],
@@ -24,9 +23,10 @@
     "opencode-plugin",
     "theme",
     "tui",
-    "theme-select"
+    "theme-select",
+    "opencode-v2"
   ],
   "peerDependencies": {
-    "@opencode-ai/plugin": "*"
+    "@opencode/plugin": ">=2.0.0"
   }
 }

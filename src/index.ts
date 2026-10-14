@@ -1,7 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin"
-
-export const ThemeSelectPlugin: Plugin = async () => {
-  return {}
+export default {
+  id: "opencode-theme-select",
+  setup() {},
 }
-
-export default { server: ThemeSelectPlugin }
