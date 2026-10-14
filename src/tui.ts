@@ -86,7 +86,7 @@ async function writeTheme(targetDir: string, theme: string): Promise<string> {
 }
 
 export default {
-  id: "opencode-theme-select",
+  id: "opencode-theme-select.tui",
   setup(context: Plugin.Context) {
     context.keymap.layer(() => ({
       commands: [
